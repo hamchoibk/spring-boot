@@ -3,6 +3,7 @@ package com.kaynaak.rest.repository;
 
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -33,4 +34,6 @@ public interface UserRepository extends JpaRepository<User, String> {
 	
 	@Query("SELECT t FROM User t WHERE t.username= :username")
 	List<User> findByUserName(@Param("username") String username);
+
+	Optional<User> findById(Integer userId);
 }

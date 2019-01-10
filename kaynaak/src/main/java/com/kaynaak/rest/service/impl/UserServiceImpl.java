@@ -56,12 +56,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findById(String id) throws AccessDeniedException {
-
-        Optional<User> optionalUser = userRepository.findById(id);
+    public User findById(String userId) throws AccessDeniedException {
+        Optional<User> optionalUser = userRepository.findById(userId);
         return optionalUser.isPresent() ? optionalUser.get() : null;
     }
 
+    @Override
+    public User findById(Integer userId) throws AccessDeniedException {
+        Optional<User> optionalUser = userRepository.findById(userId);
+        return optionalUser.isPresent() ? optionalUser.get() : null;
+    }
+
+    
     public List<User> findAll() throws AccessDeniedException {
         List<User> result = userRepository.findAll();
         return result;
@@ -118,6 +124,8 @@ public class UserServiceImpl implements UserService {
 
         // token creation
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+        
+        System.out.println(customUserDetails.getUserID() + "_" + customUserDetails.getUsername());
         String jws = tokenHelper.generateToken(customUserDetails.getUsername());
         // Return the token
         return new UserTokenState(customUserDetails.getName(), jws, (long) EXPIRES_IN);
@@ -125,7 +133,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getProfile() {
-        return this.findById(getCustomUserDetails().getUserID());
+    	Integer id = Integer.valueOf(getCustomUserDetails().getUserID());
+        return this.findById(id);
     }
 
     @Override

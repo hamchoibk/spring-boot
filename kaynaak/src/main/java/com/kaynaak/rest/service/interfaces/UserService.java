@@ -13,7 +13,9 @@ import com.kaynaak.rest.model.UserTokenState;
  */
 public interface UserService {
     User findById(String id);
-
+    
+    User findById(Integer id);
+    
     User findByUsername(String username);
 
     List<User> findAll();
