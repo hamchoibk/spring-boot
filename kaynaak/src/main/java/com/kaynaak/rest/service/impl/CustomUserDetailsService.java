@@ -25,6 +25,7 @@ import com.kaynaak.rest.repository.UserRepository;
 /**
  * Created by fan.jin on 2016-10-31.
  */
+
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
