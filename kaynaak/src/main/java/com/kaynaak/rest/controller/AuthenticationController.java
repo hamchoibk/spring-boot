@@ -9,6 +9,7 @@ import com.kaynaak.rest.entity.User;
 import com.kaynaak.rest.exception.CoreException;
 import com.kaynaak.rest.service.interfaces.UserService;
 import com.kaynaak.rest.transform.CoreResponse;
+import com.kaynaak.rest.util.Messages;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,6 +35,9 @@ public class AuthenticationController {
 
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    Messages messages;
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     @ResponseBody
@@ -58,6 +62,8 @@ public class AuthenticationController {
     @ResponseBody
     public CoreResponse login(@RequestBody User user,HttpServletResponse response) {
         try {
+        	String out = messages.get("error_1");
+        	System.out.println("haha" +out);
             logger.info(" User: " + user.toString());
             Map<String, Object> map = new HashMap<>();
             map.put("user", this.userService.login(user));
