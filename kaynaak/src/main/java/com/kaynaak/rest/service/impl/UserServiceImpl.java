@@ -20,7 +20,7 @@ import org.springframework.util.StringUtils;
 
 import com.kaynaak.rest.common.MessageCodeDefinition;
 import com.kaynaak.rest.entity.User;
-import com.kaynaak.rest.exception.CoreException;
+import com.kaynaak.rest.exception.AppException;
 import com.kaynaak.rest.model.CustomUserDetails;
 import com.kaynaak.rest.model.UserTokenState;
 import com.kaynaak.rest.repository.UserRepository;
@@ -74,18 +74,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserTokenState register(User user) throws CoreException {
+    public UserTokenState register(User user) throws AppException {
 
         if (StringUtils.isEmpty(user.getEmail())) {
-            throw new CoreException(MessageCodeDefinition.EMAIL_NOT_EMPTY_CODE, MessageCodeDefinition.EMAIL_NOT_EMPTY_MESSAGE);
+            throw new AppException(MessageCodeDefinition.EMAIL_NOT_EMPTY_CODE);
         }
 
         if (StringUtils.isEmpty(user.getName())) {
-            throw new CoreException(MessageCodeDefinition.NAME_NOT_EMPTY_CODE, MessageCodeDefinition.NAME_NOT_EMPTY_MESSAGE);
+            throw new AppException(MessageCodeDefinition.NAME_NOT_EMPTY_CODE);
         }
 
         if (StringUtils.isEmpty(user.getPassword())) {
-            throw new CoreException(MessageCodeDefinition.PASSWORD_NOT_EMPTY_CODE, MessageCodeDefinition.PASSWORD_NOT_EMPTY_MESSAGE);
+            throw new AppException(MessageCodeDefinition.PASSWORD_NOT_EMPTY_CODE);
         }
 
 //        if (StringUtils.isEmpty(user.getType()) || (!user.getType().equals(UserRoleConstant.CHEF_ROLE) && !user.getType().equals(UserRoleConstant.CUSTOMER_ROLE))) {
@@ -94,7 +94,7 @@ public class UserServiceImpl implements UserService {
         User dbUser = userRepository.findByEmail(user.getEmail());
 
         if (dbUser != null) {
-            throw new CoreException(MessageCodeDefinition.EMAIL_EXIST_CODE, MessageCodeDefinition.EMAIL_EXIST_MESSAGE);
+            throw new AppException(MessageCodeDefinition.EMAIL_EXIST_CODE);
         }
         String password = user.getPassword();
        // Customer customer = new Customer();
@@ -110,13 +110,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserTokenState login(User user) throws CoreException {
+    public UserTokenState login(User user) throws AppException {
         Authentication authentication = null;
         try {
 			UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user.getUsername(),user.getPassword());
             authentication = authenticationManager.authenticate(authToken);
         } catch (Exception e) {
-            throw new CoreException(MessageCodeDefinition.EMAIL_OR_PASSWORD_NOT_RIGHT_CODE, MessageCodeDefinition.EMAIL_OR_PASSWORD_NOT_RIGHT_MESSAGE);
+            throw new AppException(MessageCodeDefinition.INVALID_CREDENT);
         }
 
         // Inject into security context

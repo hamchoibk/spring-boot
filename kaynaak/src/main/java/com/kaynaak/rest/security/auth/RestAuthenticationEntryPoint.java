@@ -2,16 +2,16 @@ package com.kaynaak.rest.security.auth;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.kaynaak.rest.common.ResponseDescription;
-import com.kaynaak.rest.transform.CoreResponse;
-import com.kaynaak.rest.util.JsonMapper;
 
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
+
+import com.kaynaak.rest.transform.BaseResponse;
+import com.kaynaak.rest.util.JsonMapper;
 
 @Component
 public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
@@ -25,7 +25,7 @@ public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
 //        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
         response.setContentType("application/json; charset=utf-8");
         PrintWriter out = response.getWriter();
-        CoreResponse coreResponse = new CoreResponse(ResponseDescription.ERROR_STATUS, String.valueOf(HttpServletResponse.SC_UNAUTHORIZED) + " - " + authException.getMessage());
+        BaseResponse coreResponse = new BaseResponse(String.valueOf(HttpServletResponse.SC_UNAUTHORIZED) + " - " + authException.getMessage());
         out.write(JsonMapper.writeValueAsString(coreResponse));
         out.flush();
 

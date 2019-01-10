@@ -2,24 +2,26 @@ package com.kaynaak.rest.controller;
 
 import java.util.HashMap;
 import java.util.Map;
-import javax.servlet.http.HttpServletResponse;
 
-import com.kaynaak.rest.common.ResponseDescription;
-import com.kaynaak.rest.entity.User;
-import com.kaynaak.rest.exception.CoreException;
-import com.kaynaak.rest.service.interfaces.UserService;
-import com.kaynaak.rest.transform.CoreResponse;
-import com.kaynaak.rest.util.Messages;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.kaynaak.rest.entity.User;
+import com.kaynaak.rest.exception.AppException;
+import com.kaynaak.rest.service.interfaces.UserService;
+import com.kaynaak.rest.transform.BaseResponse;
+import com.kaynaak.rest.transform.ResponseFactory;
+import com.kaynaak.rest.util.Messages;
 
 /**
  * Author: Nguyen Duc Cuong
@@ -39,40 +41,44 @@ public class AuthenticationController {
     @Autowired
     Messages messages;
 
+    @Autowired
+    ResponseFactory responseFactory;
+    
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     @ResponseBody
-    public CoreResponse register(@RequestBody User user) {
+    public BaseResponse register(@RequestBody User user) {
 
         try {
             logger.info(" User: " + user.toString());
             Map<String, Object> map = new HashMap<>();
             map.put("user", this.userService.register(user));
-            return new CoreResponse(map);
-        } catch (CoreException e) {
+            return new BaseResponse(map);
+        } catch (AppException e) {
             e.printStackTrace();
-            return new CoreResponse(ResponseDescription.ERROR_STATUS, e.getMessage());
+            return new BaseResponse(e.getMessage());
         } catch (Exception e) {
             logger.info(" exc controller");
             logger.info(e.getMessage(), e);
-            return new CoreResponse(ResponseDescription.ERROR_STATUS, e.getMessage());
+            return new BaseResponse( e.getMessage());
         }
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ResponseBody
-    public CoreResponse login(@RequestBody User user,HttpServletResponse response) {
+    public ResponseEntity login(@RequestBody User user,HttpServletResponse response) {
+    	ResponseEntity resp = null;
         try {
         	String out = messages.get("error_1");
         	System.out.println("haha" +out);
             logger.info(" User: " + user.toString());
             Map<String, Object> map = new HashMap<>();
             map.put("user", this.userService.login(user));
-            return new CoreResponse(map);
-        } catch (Exception e) {
-            logger.info(" exc controller");
-            logger.info(e.getMessage(), e);
-            return new CoreResponse(ResponseDescription.ERROR_STATUS, e.getMessage());
+            return responseFactory.createResponseEntity(0, "Success", map);
+        } catch (Throwable t) {
+			resp = responseFactory.createErrorResponse(user,t);
         }
+        
+        return resp;
 
     }
 }
