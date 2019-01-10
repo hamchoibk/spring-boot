@@ -15,9 +15,9 @@ import org.apache.logging.log4j.Logger;
  * Nov 2, 2017
  */
 
-public class JsonMapper {
+public class JsonMapperUtil {
 
-    private static Logger logger = LogManager.getLogger(JsonMapper.class);
+    private static Logger logger = LogManager.getLogger(JsonMapperUtil.class);
     private static ObjectMapper mapper = new ObjectMapper();
 
     public static <O> String writeValueAsString(O o) {

@@ -11,7 +11,7 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
 import com.kaynaak.rest.transform.BaseResponse;
-import com.kaynaak.rest.util.JsonMapper;
+import com.kaynaak.rest.util.JsonMapperUtil;
 
 @Component
 public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
@@ -26,7 +26,7 @@ public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
         response.setContentType("application/json; charset=utf-8");
         PrintWriter out = response.getWriter();
         BaseResponse coreResponse = new BaseResponse(String.valueOf(HttpServletResponse.SC_UNAUTHORIZED) + " - " + authException.getMessage());
-        out.write(JsonMapper.writeValueAsString(coreResponse));
+        out.write(JsonMapperUtil.writeValueAsString(coreResponse));
         out.flush();
 
     }
