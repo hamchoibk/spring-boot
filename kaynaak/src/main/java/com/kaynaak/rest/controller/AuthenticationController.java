@@ -18,10 +18,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.kaynaak.rest.entity.User;
 import com.kaynaak.rest.exception.AppException;
+import com.kaynaak.rest.model.UserTokenState;
 import com.kaynaak.rest.service.interfaces.UserService;
 import com.kaynaak.rest.transform.BaseResponse;
 import com.kaynaak.rest.transform.ResponseFactory;
-import com.kaynaak.rest.util.Messages;
 
 /**
  * Author: Nguyen Duc Cuong
@@ -33,14 +33,10 @@ import com.kaynaak.rest.util.Messages;
 @RequestMapping(value = "/v1", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AuthenticationController {
     private Logger logger = LogManager.getLogger(getClass());
-
-
+    
     @Autowired
     private UserService userService;
     
-    @Autowired
-    Messages messages;
-
     @Autowired
     ResponseFactory responseFactory;
     
@@ -68,17 +64,15 @@ public class AuthenticationController {
     public ResponseEntity login(@RequestBody User user,HttpServletResponse response) {
     	ResponseEntity resp = null;
         try {
-        	String out = messages.get("error_1");
-        	System.out.println("haha" +out);
-            logger.info(" User: " + user.toString());
+        	UserTokenState userTokenState = this.userService.login(user);
+        	
+        	logger.info(" User: " + user.toString());
             Map<String, Object> map = new HashMap<>();
-            map.put("user", this.userService.login(user));
+            map.put("user", userTokenState);
             return responseFactory.createResponseEntity(0, "Success", map);
         } catch (Throwable t) {
 			resp = responseFactory.createErrorResponse(user,t);
         }
-        
         return resp;
-
     }
 }
