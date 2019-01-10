@@ -111,16 +111,14 @@ public class TokenHelper {
         return claims;
     }
 
-    public Boolean validateToken(String token, UserDetails userDetails) {
-        CustomUserDetails user = (CustomUserDetails) userDetails;
-        final String username = getUsernameFromToken(token);
-        final Date created = getIssuedAtDateFromToken(token);
-        return (
-                username != null &&
-                        username.equals(userDetails.getUsername()) &&
-                        !isCreatedBeforeLastPasswordReset(created, created)
-        );
-    }
+	public Boolean validateToken(String token, UserDetails userDetails) {
+		CustomUserDetails user = (CustomUserDetails) userDetails;
+		final String username = getUsernameFromToken(token);
+		final Date created = getIssuedAtDateFromToken(token);
+		return username != null && username.equals(userDetails.getUsername())
+				&& !isCreatedBeforeLastPasswordReset(created, created);
+
+	}
 
     private Boolean isCreatedBeforeLastPasswordReset(Date created, Date lastPasswordReset) {
         return (lastPasswordReset != null && created.before(lastPasswordReset));

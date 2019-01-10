@@ -2,6 +2,8 @@ package com.kaynaak.rest.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -19,28 +21,31 @@ status
  */
 
 @Entity
-@Table(name = "Customer")
+@Table(name = "user")
 public class User {
-
 	@Id
 	@Column(name = "id")
-	private String userId;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer id;
 
-	@Column(name = "email")
-	private String email;
+	@Column(name = "user_name")
+	private String username;
 
 	@Column(name = "password")
 	private String password;
 
+	@Column(name = "email")
+	private String email;
+	
 	@Column(name = "name")
 	private String name;
 
-	public String getUserId() {
-		return userId;
+	public Integer getId() {
+		return id;
 	}
 
-	public void setUserId(String userId) {
-		this.userId = userId;
+	public void setId(Integer id) {
+		this.id = id;
 	}
 
 	public String getEmail() {
@@ -66,7 +71,14 @@ public class User {
 	public void setName(String name) {
 		this.name = name;
 	}
+	
+	public String getUsername() {
+		return username;
+	}
 
+	public void setUsername(String username) {
+		this.username = username;
+	}
 	@Override
 	public String toString() {
 		return "";

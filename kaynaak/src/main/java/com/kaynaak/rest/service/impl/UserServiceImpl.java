@@ -22,7 +22,6 @@ import com.kaynaak.rest.common.MessageCodeDefinition;
 import com.kaynaak.rest.entity.User;
 import com.kaynaak.rest.exception.CoreException;
 import com.kaynaak.rest.model.CustomUserDetails;
-import com.kaynaak.rest.model.Customer;
 import com.kaynaak.rest.model.UserTokenState;
 import com.kaynaak.rest.repository.UserRepository;
 import com.kaynaak.rest.security.TokenHelper;
@@ -108,7 +107,7 @@ public class UserServiceImpl implements UserService {
     public UserTokenState login(User user) throws CoreException {
         Authentication authentication = null;
         try {
-			UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user.getEmail(),user.getPassword());
+			UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user.getUsername(),user.getPassword());
             authentication = authenticationManager.authenticate(authToken);
         } catch (Exception e) {
             throw new CoreException(MessageCodeDefinition.EMAIL_OR_PASSWORD_NOT_RIGHT_CODE, MessageCodeDefinition.EMAIL_OR_PASSWORD_NOT_RIGHT_MESSAGE);
@@ -119,7 +118,7 @@ public class UserServiceImpl implements UserService {
 
         // token creation
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-        String jws = tokenHelper.generateToken(customUserDetails.getEmail());
+        String jws = tokenHelper.generateToken(customUserDetails.getUsername());
         // Return the token
         return new UserTokenState(customUserDetails.getName(), jws, (long) EXPIRES_IN);
     }

@@ -41,18 +41,15 @@ public class CustomUserDetailsService implements UserDetailsService {
     private AuthenticationManager authenticationManager;
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
       
-    	//Optional<User> optionalUser = userRepository.findById(email);
-    	//User user= optionalUser.get();
-    	User user= userRepository.findByEmail(email);
-       /* user.setUserId("1222");
-        user.setEmail("midoreigh@gmail.com");
-        user.setPassword(passwordEncoder.encode("midoreigh@gmail.com"));
-        user.setName("Nguyen Van Ha");
-        */
+    	List<User> users= userRepository.findByUserName(userName);
+    	User user = null;
+    	if(users != null ) {
+    		user = users.get(0);
+    	}
         if (user == null) {
-            throw new UsernameNotFoundException(String.format("No user found with email '%s'.", email));
+            throw new UsernameNotFoundException(String.format("No user found with userName '%s'.", userName));
         } else {
             List<Authority> authorities = new ArrayList<>();
 //            if (user.getType().trim().equals(UserRoleConstant.CHEF_ROLE)) {
