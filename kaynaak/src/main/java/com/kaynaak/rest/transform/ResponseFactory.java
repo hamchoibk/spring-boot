@@ -10,7 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-import com.kaynaak.rest.exception.AppException;
+import com.kaynaak.rest.exception.BLException;
 import com.kaynaak.rest.util.Messages;
 
 /**
@@ -23,6 +23,14 @@ public class ResponseFactory {
 	public static final String UNKNOW_ERROR_RESOURCE = "Error_1000_desc";
 	public static final String ERROR_FORMAT_RESOURCE = "Error_%d_desc";
 
+	public static final String BL_ERROR = "BE";
+	public static final String VALIDATION_ERROR = "VE";
+	public static final String SERVICE_ERROR = "SE";
+	public static final String UNKNOWN_ERROR = "SE";
+	public static final String VALIDATION_ERROR_DESC = "Validation Error";
+	
+	
+
 	@Autowired
 	Messages messages;
 
@@ -31,25 +39,34 @@ public class ResponseFactory {
 	}
 
 	public ResponseEntity createErrorResponse(Object data, Throwable t) {
-		if ((t instanceof AppException)) {
-			AppException appEx = (AppException) t;
+		BaseResponse baseResp = null;
+		if ((t instanceof BLException)) {
+
+			BLException appEx = (BLException) t;
 			int errorCode = appEx.getErrorCode();
-			String errorMessage = String.format(ERROR_FORMAT_RESOURCE, errorCode);
-			String message = messages.get(errorMessage);
-			BaseResponse baseResp = new BaseResponse(errorCode,message);
+			if (appEx.getErrorCode() == -2 && appEx.isValidationFailed()) {
+				baseResp = new BaseResponse(errorCode, VALIDATION_ERROR_DESC, appEx.getErrorDetails());
+				baseResp.setErrorType(VALIDATION_ERROR);
+			} else {
+				String errorMessage = String.format(ERROR_FORMAT_RESOURCE, errorCode);
+				String message = messages.get(errorMessage);
+				baseResp = new BaseResponse(errorCode, message);
+				baseResp.setErrorType(BL_ERROR);
+			}
 			return new ResponseEntity(baseResp, HttpStatus.BAD_REQUEST);
 		}
 
 		String unknownError = messages.get(UNKNOW_ERROR_RESOURCE);
-		return new ResponseEntity(new BaseResponse(unknownError), HttpStatus.BAD_REQUEST);
+		baseResp = new BaseResponse(unknownError);
+		baseResp.setErrorType(UNKNOWN_ERROR);
+		return new ResponseEntity(baseResp, HttpStatus.BAD_REQUEST);
 	}
 
 	public ResponseEntity createResponseEntity(int code, String message, Object data, HttpStatus httpStatus) {
 		return new ResponseEntity(new BaseResponse(code, message, data), httpStatus);
 	}
 
-	public ResponseEntity createErrorResponse(int code, String message, Object data, Throwable t,
-			HttpStatus httpStatus) {
+	public ResponseEntity createErrorResponse(int code, String message, Object data, Throwable t, HttpStatus httpStatus) {
 
 		System.out.println(t.getClass());
 		return new ResponseEntity(new BaseResponse(code, message, data), httpStatus);

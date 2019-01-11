@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.kaynaak.rest.entity.User;
-import com.kaynaak.rest.exception.AppException;
+import com.kaynaak.rest.exception.CoreException;
 import com.kaynaak.rest.model.UserTokenState;
 import com.kaynaak.rest.service.interfaces.UserService;
 import com.kaynaak.rest.transform.BaseResponse;
@@ -49,7 +49,7 @@ public class AuthenticationController {
             Map<String, Object> map = new HashMap<>();
             map.put("user", this.userService.register(user));
             return new BaseResponse(map);
-        } catch (AppException e) {
+        } catch (CoreException e) {
             e.printStackTrace();
             return new BaseResponse(e.getMessage());
         } catch (Exception e) {

@@ -7,13 +7,17 @@ package com.kaynaak.rest.transform;
 import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
  * @author hungvq
  */
+
 public class BaseResponse implements Serializable {
 
 	private static final long serialVersionUID = -566238632352226194L;
+	
+	@JsonProperty("code")
 	protected int code;
 
 	@JsonProperty("message")
@@ -21,6 +25,10 @@ public class BaseResponse implements Serializable {
 
 	@JsonProperty("data")
 	protected Object data;
+
+	@JsonProperty("errorType")
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	protected String errorType;
 
 	public BaseResponse() {
 	}
@@ -40,8 +48,8 @@ public class BaseResponse implements Serializable {
 		this.data = data;
 	}
 
-	public BaseResponse(int code,String message) {
-		this.code =code;
+	public BaseResponse(int code, String message) {
+		this.code = code;
 		this.message = message;
 	}
 
@@ -71,5 +79,14 @@ public class BaseResponse implements Serializable {
 
 	public void setData(Object data) {
 		this.data = data;
+	}
+	
+	
+	public String getErrorType() {
+		return errorType;
+	}
+
+	public void setErrorType(String errortype) {
+		this.errorType = errortype;
 	}
 }

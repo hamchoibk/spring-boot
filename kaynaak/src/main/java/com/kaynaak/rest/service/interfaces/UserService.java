@@ -4,7 +4,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import com.kaynaak.rest.entity.User;
-import com.kaynaak.rest.exception.AppException;
+import com.kaynaak.rest.exception.CoreException;
 import com.kaynaak.rest.model.CustomUserDetails;
 import com.kaynaak.rest.model.UserTokenState;
 
@@ -20,13 +20,13 @@ public interface UserService {
 
     List<User> findAll();
 
-    UserTokenState register(User user) throws AppException;
+    UserTokenState register(User user) throws CoreException;
 
-    UserTokenState login(User user) throws AppException;
+    UserTokenState login(User user) throws CoreException;
 
     User getProfile();
 
     CustomUserDetails getCustomUserDetails();
 
-    UserTokenState refreshToken(HttpServletRequest request) throws AppException, Exception;
+    UserTokenState refreshToken(HttpServletRequest request) throws CoreException, Exception;
 }

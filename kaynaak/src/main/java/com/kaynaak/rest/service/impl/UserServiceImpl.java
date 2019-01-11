@@ -1,5 +1,7 @@
 package com.kaynaak.rest.service.impl;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,8 +21,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.kaynaak.rest.common.MessageCodeDefinition;
+import com.kaynaak.rest.common.ErrorDetail;
 import com.kaynaak.rest.entity.User;
-import com.kaynaak.rest.exception.AppException;
+import com.kaynaak.rest.exception.BLException;
+import com.kaynaak.rest.exception.CoreException;
 import com.kaynaak.rest.model.CustomUserDetails;
 import com.kaynaak.rest.model.UserTokenState;
 import com.kaynaak.rest.repository.UserRepository;
@@ -74,18 +78,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserTokenState register(User user) throws AppException {
+    public UserTokenState register(User user) throws CoreException {
 
         if (StringUtils.isEmpty(user.getEmail())) {
-            throw new AppException(MessageCodeDefinition.EMAIL_NOT_EMPTY_CODE);
+            throw new CoreException(MessageCodeDefinition.EMAIL_NOT_EMPTY_CODE);
         }
 
         if (StringUtils.isEmpty(user.getName())) {
-            throw new AppException(MessageCodeDefinition.NAME_NOT_EMPTY_CODE);
+            throw new CoreException(MessageCodeDefinition.NAME_NOT_EMPTY_CODE);
         }
 
         if (StringUtils.isEmpty(user.getPassword())) {
-            throw new AppException(MessageCodeDefinition.PASSWORD_NOT_EMPTY_CODE);
+            throw new CoreException(MessageCodeDefinition.PASSWORD_NOT_EMPTY_CODE);
         }
 
 //        if (StringUtils.isEmpty(user.getType()) || (!user.getType().equals(UserRoleConstant.CHEF_ROLE) && !user.getType().equals(UserRoleConstant.CUSTOMER_ROLE))) {
@@ -94,7 +98,7 @@ public class UserServiceImpl implements UserService {
         User dbUser = userRepository.findByEmail(user.getEmail());
 
         if (dbUser != null) {
-            throw new AppException(MessageCodeDefinition.EMAIL_EXIST_CODE);
+            throw new CoreException(MessageCodeDefinition.EMAIL_EXIST_CODE);
         }
         String password = user.getPassword();
        // Customer customer = new Customer();
@@ -110,13 +114,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserTokenState login(User user) throws AppException {
+    public UserTokenState login(User user) throws BLException {
+    	
+    	List<ErrorDetail> errors =  validateLogin( user);
+    	setValidationResult(errors);
+    
         Authentication authentication = null;
         try {
 			UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user.getUsername(),user.getPassword());
             authentication = authenticationManager.authenticate(authToken);
         } catch (Exception e) {
-            throw new AppException(MessageCodeDefinition.INVALID_CREDENT);
+            throw new BLException(MessageCodeDefinition.INVALID_CREDENT);
         }
 
         // Inject into security context
@@ -131,6 +139,30 @@ public class UserServiceImpl implements UserService {
         return new UserTokenState(customUserDetails.getName(), jws, (long) EXPIRES_IN);
     }
 
+	public  List<ErrorDetail> validateLogin(User user) {
+		List<ErrorDetail> errors = new ArrayList<>();
+		if (user.getUsername() == null || org.apache.commons.lang.StringUtils.isBlank(user.getUsername())) {
+			errors.add(new ErrorDetail("username", "User Name not null"));
+		}
+		if (user.getPassword() == null || org.apache.commons.lang.StringUtils.isBlank(user.getPassword())) {
+			errors.add(new ErrorDetail("password", "Password not null"));
+		}
+		return errors;
+	}
+	
+	private void setValidationResult(List<ErrorDetail> list) throws BLException {
+		
+		if(list != null  && list.size() >0) {
+			BLException ble = new BLException(-2);
+			ble.setValidationFailed(Boolean.TRUE.booleanValue());
+			if(ble.getErrorDetails() == null) {
+				ble.errorDetails = new  HashMap<String, Object>();
+				ble.errorDetails.put("errorDetails", list);
+			}
+			throw ble;
+		}
+		
+	}
     @Override
     public User getProfile() {
     	Integer id = Integer.valueOf(getCustomUserDetails().getUserID());
