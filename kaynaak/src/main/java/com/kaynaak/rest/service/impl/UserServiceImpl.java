@@ -142,10 +142,10 @@ public class UserServiceImpl implements UserService {
 	public  List<ErrorDetail> validateLogin(User user) {
 		List<ErrorDetail> errors = new ArrayList<>();
 		if (user.getUsername() == null || org.apache.commons.lang.StringUtils.isBlank(user.getUsername())) {
-			errors.add(new ErrorDetail("username", "User Name not null"));
+			errors.add(new ErrorDetail("username", "User name cannot be blank"));
 		}
 		if (user.getPassword() == null || org.apache.commons.lang.StringUtils.isBlank(user.getPassword())) {
-			errors.add(new ErrorDetail("password", "Password not null"));
+			errors.add(new ErrorDetail("password", "Password cannot be blank"));
 		}
 		return errors;
 	}
