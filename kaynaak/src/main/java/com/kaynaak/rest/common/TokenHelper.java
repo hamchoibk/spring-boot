@@ -1,4 +1,4 @@
-package com.kaynaak.rest.security;
+package com.kaynaak.rest.common;
 
 import java.util.Date;
 import javax.servlet.http.HttpServletRequest;

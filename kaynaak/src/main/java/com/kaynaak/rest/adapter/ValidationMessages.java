@@ -1,4 +1,4 @@
-package com.kaynaak.rest.util;
+package com.kaynaak.rest.adapter;
 
 import java.util.Locale;
 
@@ -23,13 +23,13 @@ import org.springframework.stereotype.Component;
 public class ValidationMessages {
 
     @Autowired
-    private MessageSource validateMessageSource;
+    private MessageSource validationMessageSource;
 
     private MessageSourceAccessor accessor;
 
     @PostConstruct
     private void init() {
-        accessor = new MessageSourceAccessor(validateMessageSource, Locale.ENGLISH);
+        accessor = new MessageSourceAccessor(validationMessageSource, Locale.ENGLISH);
     }
 
     public String get(String code) {

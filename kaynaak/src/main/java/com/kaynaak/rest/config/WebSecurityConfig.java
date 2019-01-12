@@ -16,8 +16,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import com.kaynaak.custom.security.crypto.password.Md5PasswordEncoder;
-import com.kaynaak.rest.common.UserRoleConstant;
-import com.kaynaak.rest.security.TokenHelper;
+import com.kaynaak.rest.common.TokenHelper;
+import com.kaynaak.rest.constants.UserRoleConstant;
 import com.kaynaak.rest.security.auth.RestAuthenticationEntryPoint;
 import com.kaynaak.rest.security.auth.TokenAuthenticationFilter;
 import com.kaynaak.rest.service.impl.SecureUserDetailsService;

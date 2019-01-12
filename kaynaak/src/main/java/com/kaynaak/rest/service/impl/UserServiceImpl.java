@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.kaynaak.rest.common.ErrorDetail;
+import com.kaynaak.rest.common.TokenHelper;
 import com.kaynaak.rest.constants.MessageCodeDefinition;
 import com.kaynaak.rest.constants.ValidationFieldConstants;
 import com.kaynaak.rest.entity.ChangePassword;
@@ -28,7 +29,6 @@ import com.kaynaak.rest.exception.BLException;
 import com.kaynaak.rest.model.SecureUserDetails;
 import com.kaynaak.rest.model.UserTokenState;
 import com.kaynaak.rest.repository.UserRepository;
-import com.kaynaak.rest.security.TokenHelper;
 import com.kaynaak.rest.service.interfaces.UserService;
 import com.kaynaak.rest.util.Md5Util;
 

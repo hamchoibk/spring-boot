@@ -14,10 +14,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import com.kaynaak.rest.adapter.ServiceMessages;
+import com.kaynaak.rest.adapter.ValidationMessages;
 import com.kaynaak.rest.common.ErrorDetail;
 import com.kaynaak.rest.exception.BLException;
-import com.kaynaak.rest.util.ServiceMessages;
-import com.kaynaak.rest.util.ValidationMessages;
 
 /**
  *

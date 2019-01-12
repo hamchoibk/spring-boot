@@ -14,7 +14,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.kaynaak.rest.security.TokenHelper;
+import com.kaynaak.rest.common.TokenHelper;
+
 
 /**
  * Created by fan.jin on 2016-10-19.

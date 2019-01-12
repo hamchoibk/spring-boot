@@ -7,10 +7,13 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 
 @Configuration
 public class AppConfiguration {
+	//class 1: org.springframework.context.support.ResourceBundleMessageSource
+	//class 2: org.springframework.context.support.ReloadableResourceBundleMessageSource;
 	@Bean
-	public MessageSource validateMessageSource() {
+	public MessageSource validationMessageSource() {
 		ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
 		messageSource.setBasename("classpath:/messages/validation_resources");
+		messageSource.setCacheSeconds(1000);
 		return messageSource;
 	}
 	
@@ -18,6 +21,7 @@ public class AppConfiguration {
 	public MessageSource messageSource() {
 		ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
 		messageSource.setBasename("classpath:/messages/service_resources");
+		messageSource.setCacheSeconds(1000);
 		return messageSource;
 	}
 }
