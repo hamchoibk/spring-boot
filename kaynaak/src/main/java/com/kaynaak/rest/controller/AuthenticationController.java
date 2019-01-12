@@ -65,7 +65,6 @@ public class AuthenticationController {
     	ResponseEntity resp = null;
         try {
         	UserTokenState userTokenState = this.userService.login(user);
-        	
         	logger.info(" User: " + user.toString());
             Map<String, Object> map = new HashMap<>();
             map.put("user", userTokenState);

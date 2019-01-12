@@ -1,10 +1,12 @@
 package com.kaynaak.rest.service.interfaces;
 
 import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
+import com.kaynaak.rest.entity.ChangePassword;
 import com.kaynaak.rest.entity.User;
-import com.kaynaak.rest.exception.CoreException;
+import com.kaynaak.rest.exception.BLException;
 import com.kaynaak.rest.model.CustomUserDetails;
 import com.kaynaak.rest.model.UserTokenState;
 
@@ -20,13 +22,15 @@ public interface UserService {
 
     List<User> findAll();
 
-    UserTokenState register(User user) throws CoreException;
+    UserTokenState register(User user) throws BLException;
 
-    UserTokenState login(User user) throws CoreException;
+    UserTokenState login(User user) throws BLException;
 
     User getProfile();
 
     CustomUserDetails getCustomUserDetails();
 
-    UserTokenState refreshToken(HttpServletRequest request) throws CoreException, Exception;
+    UserTokenState refreshToken(HttpServletRequest request) throws BLException, Exception;
+    
+    User changePassword(ChangePassword changepassword) throws BLException;
 }

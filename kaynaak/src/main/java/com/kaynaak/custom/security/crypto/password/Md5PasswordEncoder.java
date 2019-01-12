@@ -8,8 +8,8 @@ public class Md5PasswordEncoder  implements PasswordEncoder{
 
 	@Override
 	public String encode(CharSequence rawPassword) {
-		Md5Util.md5Hash(rawPassword.toString());
-		return rawPassword.toString();
+		return Md5Util.md5Hash(rawPassword.toString());
+		//return rawPassword.toString();
 	}
 
 	@Override
@@ -17,7 +17,9 @@ public class Md5PasswordEncoder  implements PasswordEncoder{
 		if (encodedPassword == null || encodedPassword.length() == 0) {
 			return false;
 		}
-		return encodedPassword.equals(rawPassword.toString());
+		
+		String hashPwd =Md5Util.md5Hash(rawPassword.toString());
+		return encodedPassword.equals(hashPwd);
 	}
 
 }

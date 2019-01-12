@@ -1,7 +1,6 @@
 package com.kaynaak.rest.service.impl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,14 +22,15 @@ import org.springframework.util.StringUtils;
 import com.kaynaak.rest.common.ErrorDetail;
 import com.kaynaak.rest.constants.MessageCodeDefinition;
 import com.kaynaak.rest.constants.ValidationFieldConstants;
+import com.kaynaak.rest.entity.ChangePassword;
 import com.kaynaak.rest.entity.User;
 import com.kaynaak.rest.exception.BLException;
-import com.kaynaak.rest.exception.CoreException;
 import com.kaynaak.rest.model.CustomUserDetails;
 import com.kaynaak.rest.model.UserTokenState;
 import com.kaynaak.rest.repository.UserRepository;
 import com.kaynaak.rest.security.TokenHelper;
 import com.kaynaak.rest.service.interfaces.UserService;
+import com.kaynaak.rest.util.Md5Util;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -57,6 +57,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User findByUsername(String email) throws UsernameNotFoundException {
 		User u = userRepository.findByEmail(email);
+		
 		return u;
 	}
 
@@ -68,8 +69,9 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User findById(Integer userId) throws AccessDeniedException {
-		Optional<User> optionalUser = userRepository.findById(userId);
-		return optionalUser.isPresent() ? optionalUser.get() : null;
+		return userRepository.findById(userId);
+		//Optional<User> optionalUser = userRepository.findById(userId);
+		//return optionalUser.isPresent() ? optionalUser.get() : null;
 	}
 
 	public List<User> findAll() throws AccessDeniedException {
@@ -78,18 +80,18 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public UserTokenState register(User user) throws CoreException {
+	public UserTokenState register(User user) throws BLException {
 
 		if (StringUtils.isEmpty(user.getEmail())) {
-			throw new CoreException(MessageCodeDefinition.EMAIL_NOT_EMPTY_CODE);
+			throw new BLException(MessageCodeDefinition.EMAIL_NOT_EMPTY_CODE);
 		}
 
 		if (StringUtils.isEmpty(user.getName())) {
-			throw new CoreException(MessageCodeDefinition.NAME_NOT_EMPTY_CODE);
+			throw new BLException(MessageCodeDefinition.NAME_NOT_EMPTY_CODE);
 		}
 
 		if (StringUtils.isEmpty(user.getPassword())) {
-			throw new CoreException(MessageCodeDefinition.PASSWORD_NOT_EMPTY_CODE);
+			throw new BLException(MessageCodeDefinition.PASSWORD_NOT_EMPTY_CODE);
 		}
 
 //        if (StringUtils.isEmpty(user.getType()) || (!user.getType().equals(UserRoleConstant.CHEF_ROLE) && !user.getType().equals(UserRoleConstant.CUSTOMER_ROLE))) {
@@ -98,7 +100,7 @@ public class UserServiceImpl implements UserService {
 		User dbUser = userRepository.findByEmail(user.getEmail());
 
 		if (dbUser != null) {
-			throw new CoreException(MessageCodeDefinition.EMAIL_EXIST_CODE);
+			throw new BLException(MessageCodeDefinition.EMAIL_EXIST_CODE);
 		}
 		String password = user.getPassword();
 		// Customer customer = new Customer();
@@ -140,26 +142,6 @@ public class UserServiceImpl implements UserService {
 		// Return the token
 		return new UserTokenState(customUserDetails.getName(), jws, (long) EXPIRES_IN);
 	}
-
-	public List<ErrorDetail> validateLogin(User user) {
-		List<ErrorDetail> errors = new ArrayList<>();
-		if (user.getUsername() == null || org.apache.commons.lang.StringUtils.isBlank(user.getUsername())) {
-			errors.add(new ErrorDetail(ValidationFieldConstants.USER_NAME, ValidationFieldConstants.NOT_NULL_USER_NAME_KEY));
-		}
-		if (user.getPassword() == null || org.apache.commons.lang.StringUtils.isBlank(user.getPassword())) {
-			errors.add(new ErrorDetail(ValidationFieldConstants.PASSWORD, ValidationFieldConstants.NOT_NULL_PASSWORD_KEY));
-		}
-		return errors;
-	}
-
-	private void setValidationResult(List<ErrorDetail> list) throws BLException {
-		if (list != null && list.size() > 0) {
-			BLException ble = new BLException(-2);
-			ble.setValidationFailed(Boolean.TRUE.booleanValue());
-			ble.setErrorDetails(list);
-			throw ble;
-		}
-	}
 	
 	@Override
 	public User getProfile() {
@@ -169,9 +151,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public CustomUserDetails getCustomUserDetails() {
-		CustomUserDetails customUserDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication()
-				.getPrincipal();
-		return customUserDetails;
+		return (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 	}
 
 	@Override
@@ -190,4 +170,58 @@ public class UserServiceImpl implements UserService {
 		}
 	}
 
+	@Override
+	public User changePassword(ChangePassword changepassword) throws BLException {
+		List<ErrorDetail> errors = new ArrayList<>();
+		CustomUserDetails  userDetails = getCustomUserDetails();
+		String currentPwdDataBase = userDetails.getPassword();
+		if( null ==changepassword
+			||null == changepassword.getCurrentPassword()
+			||null == changepassword.getNewPassword()
+			||null == changepassword.getConfirmNewPassword()) {
+			errors.add(new ErrorDetail(ValidationFieldConstants.CURRENT_PASSWORD,ValidationFieldConstants.REQUIRED_INFOMATION));
+		} else {
+			String md5Current =Md5Util.md5Hash(changepassword.getCurrentPassword());
+			if(!md5Current.equals(currentPwdDataBase)) {
+				errors.add(new ErrorDetail(ValidationFieldConstants.INVALID_CURRENT_PASSWORD,ValidationFieldConstants.INVALID_CURRENT_PASSWORD));
+			}
+			
+			if(!changepassword.getNewPassword().equals(changepassword.getConfirmNewPassword())) {
+				errors.add(new ErrorDetail(ValidationFieldConstants.CONFIRM_NEW_PASSWORD,ValidationFieldConstants.NOMATCH_PASSWORD_CONFIRMPASSWORD));
+			}
+			if(changepassword.getNewPassword().equals(changepassword.getCurrentPassword())) {
+				errors.add(new ErrorDetail(ValidationFieldConstants.NEW_PASSWORD,ValidationFieldConstants.INVALID_NEW_PASSWORD));
+			}
+		}
+		setValidationResult(errors);	
+		
+		Integer id = Integer.valueOf(userDetails.getUserID());
+		User userFromDb = userRepository.findById(id);
+		userFromDb.setPassword(passwordEncoder.encode(changepassword.getNewPassword()));
+		userRepository.save(userFromDb);
+		
+		//System.out.println(id);
+		return userFromDb;
+	}
+
+	
+	public List<ErrorDetail> validateLogin(User user) {
+		List<ErrorDetail> errors = new ArrayList<>();
+		if (user.getUsername() == null || StringUtils.isEmpty(user.getUsername())) {
+			errors.add(new ErrorDetail(ValidationFieldConstants.USER_NAME, ValidationFieldConstants.NOT_NULL_USER_NAME_KEY));
+		}
+		if (user.getPassword() == null ||StringUtils.isEmpty(user.getPassword())) {
+			errors.add(new ErrorDetail(ValidationFieldConstants.PASSWORD, ValidationFieldConstants.NOT_NULL_PASSWORD_KEY));
+		}
+		return errors;
+	}
+
+	private void setValidationResult(List<ErrorDetail> list) throws BLException {
+		if (list != null && list.size() > 0) {
+			BLException ble = new BLException(-2);
+			ble.setValidationFailed(Boolean.TRUE.booleanValue());
+			ble.setErrorDetails(list);
+			throw ble;
+		}
+	}
 }
