@@ -1,12 +1,13 @@
 package com.kaynaak.rest.util;
 
+import java.util.Locale;
+
+import javax.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
-import java.util.Locale;
 
 /**
  * Helper to simplify accessing i18n messages in code.
@@ -19,16 +20,16 @@ import java.util.Locale;
  * @since 2015-11-02
  */
 @Component
-public class Messages {
+public class ValidationMessages {
 
     @Autowired
-    private MessageSource messageSource;
+    private MessageSource validateMessageSource;
 
     private MessageSourceAccessor accessor;
 
     @PostConstruct
     private void init() {
-        accessor = new MessageSourceAccessor(messageSource, Locale.ENGLISH);
+        accessor = new MessageSourceAccessor(validateMessageSource, Locale.ENGLISH);
     }
 
     public String get(String code) {

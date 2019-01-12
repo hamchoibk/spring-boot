@@ -50,8 +50,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(jwtUserDetailsService)
-                .passwordEncoder(passwordEncoder());
+        auth.userDetailsService(jwtUserDetailsService).passwordEncoder(passwordEncoder());
     }
 
     @Autowired
@@ -59,8 +58,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+    	http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint).and()
                 .authorizeRequests()
                 .antMatchers(
@@ -83,13 +81,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
     }
 
-
     @Override
     public void configure(WebSecurity web) throws Exception {
         // TokenAuthenticationFilter will ignore the below paths
         web.ignoring().antMatchers(
-                HttpMethod.POST,
-                "/v1/register", "/v1/login"
+        	HttpMethod.POST,"/v1/register", "/v1/login"
         );
         web.ignoring().antMatchers(
                 HttpMethod.GET,

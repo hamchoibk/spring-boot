@@ -12,12 +12,12 @@ public class ErrorDetail implements Serializable {
 	public ErrorDetail() {
 	}
 
-	public ErrorDetail(String fieldname, String errorDescription) {
+	public ErrorDetail(String fieldname, String errorKey) {
 		this.fieldname = fieldname;
-		this.desc = errorDescription;
+		this.key = errorKey;
 	}
 
-	public ErrorDetail(String errorKey, String fieldname, String errorDescription) {
+	public ErrorDetail(String fieldname, String errorKey,String errorDescription) {
 		this.key = errorKey;
 		this.fieldname = errorKey;
 		this.desc = errorDescription;

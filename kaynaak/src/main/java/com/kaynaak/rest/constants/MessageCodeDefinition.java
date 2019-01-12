@@ -1,4 +1,4 @@
-package com.kaynaak.rest.common;
+package com.kaynaak.rest.constants;
 
 /**
  * Author: Nguyen Duc Cuong Create date: Friday, 9/14/2018 4:05 PM Email:

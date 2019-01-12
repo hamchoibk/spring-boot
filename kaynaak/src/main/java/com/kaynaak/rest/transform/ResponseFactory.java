@@ -5,13 +5,19 @@
  */
 package com.kaynaak.rest.transform;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import com.kaynaak.rest.common.ErrorDetail;
 import com.kaynaak.rest.exception.BLException;
-import com.kaynaak.rest.util.Messages;
+import com.kaynaak.rest.util.ServiceMessages;
+import com.kaynaak.rest.util.ValidationMessages;
 
 /**
  *
@@ -23,16 +29,21 @@ public class ResponseFactory {
 	public static final String UNKNOW_ERROR_RESOURCE = "Error_1000_desc";
 	public static final String ERROR_FORMAT_RESOURCE = "Error_%d_desc";
 
-	public static final String BL_ERROR = "BE";
+	public static final String BUSINESS_ERROR = "BE";
 	public static final String VALIDATION_ERROR = "VE";
 	public static final String SERVICE_ERROR = "SE";
-	public static final String UNKNOWN_ERROR = "SE";
+	public static final String UNKNOWN_ERROR = "UE";
 	public static final String VALIDATION_ERROR_DESC = "Validation Error";
-	
+	public static final String ERROR_DETAILS ="errorDetails";
 	
 
+	public static final int VALIDATION_ERROR_CODE = -2;
+
 	@Autowired
-	Messages messages;
+	ServiceMessages serviceMessages;
+
+	@Autowired
+	ValidationMessages validationMessages;
 
 	public ResponseEntity createResponseEntity(int code, String message, Object data) {
 		return new ResponseEntity(new BaseResponse(code, message, data), HttpStatus.OK);
@@ -44,19 +55,29 @@ public class ResponseFactory {
 
 			BLException appEx = (BLException) t;
 			int errorCode = appEx.getErrorCode();
-			if (appEx.getErrorCode() == -2 && appEx.isValidationFailed()) {
-				baseResp = new BaseResponse(errorCode, VALIDATION_ERROR_DESC, appEx.getErrorDetails());
+			if (appEx.getErrorCode() == VALIDATION_ERROR_CODE && appEx.isValidationFailed()) {
+
+				List<ErrorDetail> errorDetails = appEx.getErrorDetails();
+				for (ErrorDetail errorDetail : errorDetails) {
+					if (errorDetail.getKey() != null) {
+						errorDetail.setDesc(validationMessages.get(errorDetail.getKey()));
+					}
+				}
+				Map<String, Object> map = new HashMap<>();
+				map.put(ERROR_DETAILS, errorDetails);
+				baseResp = new BaseResponse(errorCode, VALIDATION_ERROR_DESC, map);
 				baseResp.setErrorType(VALIDATION_ERROR);
+
 			} else {
 				String errorMessage = String.format(ERROR_FORMAT_RESOURCE, errorCode);
-				String message = messages.get(errorMessage);
+				String message = serviceMessages.get(errorMessage);
 				baseResp = new BaseResponse(errorCode, message);
-				baseResp.setErrorType(BL_ERROR);
+				baseResp.setErrorType(BUSINESS_ERROR);
 			}
 			return new ResponseEntity(baseResp, HttpStatus.BAD_REQUEST);
 		}
 
-		String unknownError = messages.get(UNKNOW_ERROR_RESOURCE);
+		String unknownError = serviceMessages.get(UNKNOW_ERROR_RESOURCE);
 		baseResp = new BaseResponse(unknownError);
 		baseResp.setErrorType(UNKNOWN_ERROR);
 		return new ResponseEntity(baseResp, HttpStatus.BAD_REQUEST);
@@ -67,8 +88,6 @@ public class ResponseFactory {
 	}
 
 	public ResponseEntity createErrorResponse(int code, String message, Object data, Throwable t, HttpStatus httpStatus) {
-
-		System.out.println(t.getClass());
 		return new ResponseEntity(new BaseResponse(code, message, data), httpStatus);
 	}
 }
