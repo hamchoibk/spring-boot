@@ -25,7 +25,7 @@ import com.kaynaak.rest.constants.ValidationFieldConstants;
 import com.kaynaak.rest.entity.ChangePassword;
 import com.kaynaak.rest.entity.User;
 import com.kaynaak.rest.exception.BLException;
-import com.kaynaak.rest.model.CustomUserDetails;
+import com.kaynaak.rest.model.SecureUserDetails;
 import com.kaynaak.rest.model.UserTokenState;
 import com.kaynaak.rest.repository.UserRepository;
 import com.kaynaak.rest.security.TokenHelper;
@@ -33,7 +33,7 @@ import com.kaynaak.rest.service.interfaces.UserService;
 import com.kaynaak.rest.util.Md5Util;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl extends BaseServiceImpl implements UserService {
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
 	private AuthenticationManager authenticationManager;
 
 	@Autowired
-	private CustomUserDetailsService userDetailsService;
+	private SecureUserDetailsService userDetailsService;
 
 	@Override
 	public User findByUsername(String email) throws UsernameNotFoundException {
@@ -119,7 +119,7 @@ public class UserServiceImpl implements UserService {
 	public UserTokenState login(User user) throws BLException {
 
 		List<ErrorDetail> errors = validateLogin(user);
-		setValidationResult(errors);
+		super.setValidationResult(errors);
 
 		Authentication authentication = null;
 		try {
@@ -134,7 +134,7 @@ public class UserServiceImpl implements UserService {
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 
 		// token creation
-		CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+		SecureUserDetails customUserDetails = (SecureUserDetails) authentication.getPrincipal();
 
 		// System.out.println(customUserDetails.getUserID() + "_" +
 		// customUserDetails.getUsername());
@@ -150,8 +150,8 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public CustomUserDetails getCustomUserDetails() {
-		return (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	public SecureUserDetails getCustomUserDetails() {
+		return (SecureUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 	}
 
 	@Override
@@ -161,7 +161,7 @@ public class UserServiceImpl implements UserService {
 		if (authToken != null) {
 			// TODO check user password last update
 			String refreshedToken = tokenHelper.refreshToken(authToken);
-			CustomUserDetails customUserDetails = (CustomUserDetails) SecurityContextHolder.getContext()
+			SecureUserDetails customUserDetails = (SecureUserDetails) SecurityContextHolder.getContext()
 					.getAuthentication().getPrincipal();
 			return new UserTokenState(customUserDetails.getName(), refreshedToken, (long) EXPIRES_IN);
 
@@ -173,7 +173,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User changePassword(ChangePassword changepassword) throws BLException {
 		List<ErrorDetail> errors = new ArrayList<>();
-		CustomUserDetails  userDetails = getCustomUserDetails();
+		SecureUserDetails  userDetails = getCustomUserDetails();
 		String currentPwdDataBase = userDetails.getPassword();
 		if( null ==changepassword
 			||null == changepassword.getCurrentPassword()
@@ -193,7 +193,7 @@ public class UserServiceImpl implements UserService {
 				errors.add(new ErrorDetail(ValidationFieldConstants.NEW_PASSWORD,ValidationFieldConstants.INVALID_NEW_PASSWORD));
 			}
 		}
-		setValidationResult(errors);	
+		super.setValidationResult(errors);	
 		
 		Integer id = Integer.valueOf(userDetails.getUserID());
 		User userFromDb = userRepository.findById(id);
@@ -214,14 +214,5 @@ public class UserServiceImpl implements UserService {
 			errors.add(new ErrorDetail(ValidationFieldConstants.PASSWORD, ValidationFieldConstants.NOT_NULL_PASSWORD_KEY));
 		}
 		return errors;
-	}
-
-	private void setValidationResult(List<ErrorDetail> list) throws BLException {
-		if (list != null && list.size() > 0) {
-			BLException ble = new BLException(-2);
-			ble.setValidationFailed(Boolean.TRUE.booleanValue());
-			ble.setErrorDetails(list);
-			throw ble;
-		}
 	}
 }

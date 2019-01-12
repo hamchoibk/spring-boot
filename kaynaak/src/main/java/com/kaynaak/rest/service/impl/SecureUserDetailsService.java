@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 
 import com.kaynaak.rest.entity.User;
 import com.kaynaak.rest.model.Authority;
-import com.kaynaak.rest.model.CustomUserDetails;
+import com.kaynaak.rest.model.SecureUserDetails;
 import com.kaynaak.rest.model.UserRoleName;
 import com.kaynaak.rest.repository.UserRepository;
 
@@ -27,7 +27,7 @@ import com.kaynaak.rest.repository.UserRepository;
  */
 
 @Service
-public class CustomUserDetailsService implements UserDetailsService {
+public class SecureUserDetailsService implements UserDetailsService {
 
     protected final Log LOGGER = LogFactory.getLog(getClass());
 
@@ -58,7 +58,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 //                authorities.add(new Authority(UserRoleName.ROLE_CHEF));
 //            }
             authorities.add(new Authority(UserRoleName.ROLE_CHEF));
-            CustomUserDetails customUserDetails = new CustomUserDetails(user, authorities);
+            SecureUserDetails customUserDetails = new SecureUserDetails(user, authorities);
             return customUserDetails;
         }
     }

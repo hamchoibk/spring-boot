@@ -4,7 +4,7 @@ import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 
 import com.kaynaak.rest.common.TimeProvider;
-import com.kaynaak.rest.model.CustomUserDetails;
+import com.kaynaak.rest.model.SecureUserDetails;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -112,7 +112,7 @@ public class TokenHelper {
     }
 
 	public Boolean validateToken(String token, UserDetails userDetails) {
-		CustomUserDetails user = (CustomUserDetails) userDetails;
+		SecureUserDetails user = (SecureUserDetails) userDetails;
 		final String username = getUsernameFromToken(token);
 		final Date created = getIssuedAtDateFromToken(token);
 		return username != null && username.equals(userDetails.getUsername())

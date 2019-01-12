@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.kaynaak.rest.entity.ChangePassword;
 import com.kaynaak.rest.entity.User;
 import com.kaynaak.rest.exception.BLException;
-import com.kaynaak.rest.model.CustomUserDetails;
+import com.kaynaak.rest.model.SecureUserDetails;
 import com.kaynaak.rest.model.UserTokenState;
 
 /**
@@ -28,7 +28,7 @@ public interface UserService {
 
     User getProfile();
 
-    CustomUserDetails getCustomUserDetails();
+    SecureUserDetails getCustomUserDetails();
 
     UserTokenState refreshToken(HttpServletRequest request) throws BLException, Exception;
     

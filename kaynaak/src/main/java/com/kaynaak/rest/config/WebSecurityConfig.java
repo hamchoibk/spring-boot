@@ -20,7 +20,7 @@ import com.kaynaak.rest.common.UserRoleConstant;
 import com.kaynaak.rest.security.TokenHelper;
 import com.kaynaak.rest.security.auth.RestAuthenticationEntryPoint;
 import com.kaynaak.rest.security.auth.TokenAuthenticationFilter;
-import com.kaynaak.rest.service.impl.CustomUserDetailsService;
+import com.kaynaak.rest.service.impl.SecureUserDetailsService;
 
 /**
  * Created by fan.jin on 2016-10-19.
@@ -37,7 +37,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Autowired
-    private CustomUserDetailsService jwtUserDetailsService;
+    private SecureUserDetailsService jwtUserDetailsService;
 
     @Autowired
     private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
