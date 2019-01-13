@@ -2,6 +2,8 @@ package com.kaynaak.rest.entity;
 
 public class ChangePassword {
 	
+	protected String email;
+	protected String otp;
 	protected String currentPassword;
 	protected String confirmCurrentPassword;
 	protected String newPassword;
@@ -30,5 +32,18 @@ public class ChangePassword {
 	}
 	public void setConfirmNewPassword(String confirmNewPassword) {
 		this.confirmNewPassword = confirmNewPassword;
+	}
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	
+	public String getOtp() {
+		return otp;
+	}
+	public void setOtp(String otp) {
+		this.otp = otp;
 	}
 }

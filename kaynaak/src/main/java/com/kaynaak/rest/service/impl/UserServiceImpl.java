@@ -3,6 +3,7 @@ package com.kaynaak.rest.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -26,6 +27,7 @@ import com.kaynaak.rest.constants.ValidationFieldConstants;
 import com.kaynaak.rest.entity.ChangePassword;
 import com.kaynaak.rest.entity.User;
 import com.kaynaak.rest.exception.BLException;
+import com.kaynaak.rest.mail.EmailService;
 import com.kaynaak.rest.model.SecureUserDetails;
 import com.kaynaak.rest.model.UserTokenState;
 import com.kaynaak.rest.repository.UserRepository;
@@ -53,6 +55,9 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
 
 	@Autowired
 	private SecureUserDetailsService userDetailsService;
+	
+	@Autowired
+	private EmailService emailservice;
 
 	@Override
 	public User findByUsername(String email) throws UsernameNotFoundException {
@@ -118,6 +123,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
 	@Override
 	public UserTokenState login(User user) throws BLException {
 
+		//emailservice.sendSimpleMessage("nvhabk@gmail.com", "haha", "ada");
 		List<ErrorDetail> errors = validateLogin(user);
 		super.setValidationResult(errors);
 
@@ -201,6 +207,53 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
 		userRepository.save(userFromDb);
 		
 		//System.out.println(id);
+		return userFromDb;
+	}
+	
+	@Override
+	public User resetPasswordInit(ChangePassword changepassword) throws BLException {
+		Random ran = new Random();
+		int otp = ran.nextInt(99999) + 100000;
+		
+		User userFromDb = userRepository.findByEmail(changepassword.getEmail());
+		if(userFromDb == null) {
+			throw new BLException(1100);
+		}
+		
+		userFromDb.setOtp(String.valueOf(otp));
+		userRepository.save(userFromDb);
+	
+		String baseURL="test";
+		 String subject = "Forgot password!";
+        String content = "Hi "+userFromDb.getName()
+        +", \r\n\r\nWe have got a request to recover your password. OTP for create a new password is, "
+        +otp+". Please click on the below link and create a new password.\r\n"
+        +baseURL
+        +"RecoverPassword\r\n\r\nThanks,\r\nStudentmgt Team";
+        
+        emailservice.sendSimpleMessage(changepassword.getEmail(), subject, content);
+
+		return userFromDb;
+	}
+
+	@Override
+	public User resetPassword(ChangePassword changepassword) throws BLException {
+		User userFromDb = userRepository.findByEmail(changepassword.getEmail());
+		if(userFromDb == null) {
+			throw new BLException(1100);
+		}
+		if(null == changepassword.getOtp() || !changepassword.getOtp().equals(userFromDb.getOtp())) {
+			throw new BLException(1101);
+		}
+		
+		if(null == changepassword.getNewPassword()) {
+			throw new BLException(1101);
+		}
+		userFromDb.setOtp("");
+		userFromDb.setPassword(passwordEncoder.encode(changepassword.getNewPassword()));
+		
+		
+		userRepository.save(userFromDb);
 		return userFromDb;
 	}
 

@@ -39,6 +39,9 @@ public class User {
 	
 	@Column(name = "name")
 	private String name;
+	
+	@Column(name = "otp",nullable = true)
+	private String otp;
 
 	public Integer getId() {
 		return id;
@@ -82,5 +85,13 @@ public class User {
 	@Override
 	public String toString() {
 		return "";
+	}
+	
+	public String getOtp() {
+		return otp;
+	}
+
+	public void setOtp(String otp) {
+		this.otp = otp;
 	}
 }

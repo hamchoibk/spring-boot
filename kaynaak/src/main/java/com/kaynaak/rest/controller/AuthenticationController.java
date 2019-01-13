@@ -61,8 +61,8 @@ public class AuthenticationController {
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity login(@RequestBody User user,HttpServletResponse response) {
-    	ResponseEntity resp = null;
+    public ResponseEntity<BaseResponse> login(@RequestBody User user,HttpServletResponse response) {
+    	ResponseEntity<BaseResponse> resp = null;
         try {
         	UserTokenState userTokenState = this.userService.login(user);
         	logger.info(" User: " + user.toString());

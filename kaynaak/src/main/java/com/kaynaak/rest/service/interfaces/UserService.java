@@ -33,4 +33,8 @@ public interface UserService {
     UserTokenState refreshToken(HttpServletRequest request) throws BLException, Exception;
     
     User changePassword(ChangePassword changepassword) throws BLException;
+    
+    User resetPasswordInit(ChangePassword changepassword) throws BLException;
+    
+    User resetPassword(ChangePassword changepassword) throws BLException;
 }

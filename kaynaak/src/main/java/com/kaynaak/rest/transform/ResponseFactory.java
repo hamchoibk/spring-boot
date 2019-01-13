@@ -45,11 +45,11 @@ public class ResponseFactory {
 	@Autowired
 	ValidationMessages validationMessages;
 
-	public ResponseEntity createResponseEntity(int code, String message, Object data) {
-		return new ResponseEntity(new BaseResponse(code, message, data), HttpStatus.OK);
+	public ResponseEntity<BaseResponse> createResponseEntity(int code, String message, Object data) {
+		return new ResponseEntity<BaseResponse>(new BaseResponse(code, message, data), HttpStatus.OK);
 	}
 
-	public ResponseEntity createErrorResponse(Object data, Throwable t) {
+	public ResponseEntity<BaseResponse> createErrorResponse(Object data, Throwable t) {
 		BaseResponse baseResp = null;
 		if ((t instanceof BLException)) {
 
@@ -74,20 +74,20 @@ public class ResponseFactory {
 				baseResp = new BaseResponse(errorCode, message);
 				baseResp.setErrorType(BUSINESS_ERROR);
 			}
-			return new ResponseEntity(baseResp, HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<BaseResponse>(baseResp, HttpStatus.BAD_REQUEST);
 		}
 
 		String unknownError = serviceMessages.get(UNKNOW_ERROR_RESOURCE);
 		baseResp = new BaseResponse(unknownError);
 		baseResp.setErrorType(UNKNOWN_ERROR);
-		return new ResponseEntity(baseResp, HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<BaseResponse>(baseResp, HttpStatus.BAD_REQUEST);
 	}
 
-	public ResponseEntity createResponseEntity(int code, String message, Object data, HttpStatus httpStatus) {
-		return new ResponseEntity(new BaseResponse(code, message, data), httpStatus);
+	public ResponseEntity<BaseResponse> createResponseEntity(int code, String message, Object data, HttpStatus httpStatus) {
+		return new ResponseEntity<BaseResponse>(new BaseResponse(code, message, data), httpStatus);
 	}
 
-	public ResponseEntity createErrorResponse(int code, String message, Object data, Throwable t, HttpStatus httpStatus) {
-		return new ResponseEntity(new BaseResponse(code, message, data), httpStatus);
+	public ResponseEntity<BaseResponse> createErrorResponse(int code, String message, Object data, Throwable t, HttpStatus httpStatus) {
+		return new ResponseEntity<BaseResponse>(new BaseResponse(code, message, data), httpStatus);
 	}
 }

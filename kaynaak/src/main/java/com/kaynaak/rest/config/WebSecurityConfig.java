@@ -85,7 +85,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) throws Exception {
         // TokenAuthenticationFilter will ignore the below paths
         web.ignoring().antMatchers(
-        	HttpMethod.POST,"/v1/register", "/v1/login"
+        	HttpMethod.POST,"/v1/register", "/v1/login","/v1/resetPasswordInit","/v1/resetPassword"
         );
         web.ignoring().antMatchers(
                 HttpMethod.GET,

@@ -53,10 +53,40 @@ public class UserController {
 
 	@RequestMapping(value = "/changePassword", method = RequestMethod.POST)
 	@ResponseBody
-	public ResponseEntity changePassword(@RequestBody ChangePassword changePassword, HttpServletResponse response) {
-		ResponseEntity resp = null;
+	public ResponseEntity<BaseResponse> changePassword(@RequestBody ChangePassword changePassword, HttpServletResponse response) {
+		ResponseEntity<BaseResponse> resp = null;
 		try {
 			User user = this.userService.changePassword(changePassword);
+			Map<String, Object> map = new HashMap<>();
+			return responseFactory.createResponseEntity(0, "Success", map);
+		} catch (Throwable t) {
+			resp = responseFactory.createErrorResponse(changePassword, t);
+		}
+		return resp;
+	}
+	
+
+	@RequestMapping(value = "/resetPasswordInit", method = RequestMethod.POST)
+	@ResponseBody
+	public ResponseEntity<BaseResponse> resetPasswordInit(@RequestBody ChangePassword changePassword, HttpServletResponse response) {
+		ResponseEntity<BaseResponse> resp = null;
+		try {
+			User user = this.userService.resetPasswordInit(changePassword);
+			Map<String, Object> map = new HashMap<>();
+			return responseFactory.createResponseEntity(0, "Success", map);
+		} catch (Throwable t) {
+			resp = responseFactory.createErrorResponse(changePassword, t);
+		}
+		return resp;
+	}
+	
+
+	@RequestMapping(value = "/resetPassword", method = RequestMethod.POST)
+	@ResponseBody
+	public ResponseEntity<BaseResponse> resetPassword(@RequestBody ChangePassword changePassword, HttpServletResponse response) {
+		ResponseEntity<BaseResponse> resp = null;
+		try {
+			User user = this.userService.resetPassword(changePassword);
 			Map<String, Object> map = new HashMap<>();
 			return responseFactory.createResponseEntity(0, "Success", map);
 		} catch (Throwable t) {

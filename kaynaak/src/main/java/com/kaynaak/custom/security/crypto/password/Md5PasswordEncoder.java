@@ -9,15 +9,13 @@ public class Md5PasswordEncoder  implements PasswordEncoder{
 	@Override
 	public String encode(CharSequence rawPassword) {
 		return Md5Util.md5Hash(rawPassword.toString());
-		//return rawPassword.toString();
 	}
 
 	@Override
 	public boolean matches(CharSequence rawPassword, String encodedPassword) {
 		if (encodedPassword == null || encodedPassword.length() == 0) {
-			return false;
+			return Boolean.FALSE.booleanValue();
 		}
-		
 		String hashPwd =Md5Util.md5Hash(rawPassword.toString());
 		return encodedPassword.equals(hashPwd);
 	}
