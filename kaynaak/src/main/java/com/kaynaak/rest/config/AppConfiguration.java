@@ -30,23 +30,41 @@ public class AppConfiguration {
 		return messageSource;
 	}
 
-	/*
-	 smtp.host=mail.smtp2go.com
-smtp.port=25
-smtp.maxRecipient=25
-smtp.user=hanguyenvan127@gmail.com
-smtp.password=123456a@
-
-
-mailSender.setHost("smtp.gmail.com");
-		mailSender.setPort(587);
-		mailSender.setUsername("hanv2050@gmail.com");
-		mailSender.setPassword("ngotngao");
-	 */
 	@Bean
 	public JavaMailSender getJavaMailSender() {
 		JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-		
+		//setGmail(mailSender);
+		setYahooMail(mailSender);
+		return mailSender;
+	}
+	
+	void setGmail(JavaMailSenderImpl mailSender) {
+		mailSender.setHost("smtp.gmail.com");
+		mailSender.setPort(587);
+		mailSender.setUsername("hanv2050@gmail.com");
+		mailSender.setPassword("ngotngao");
+	
+		Properties props = mailSender.getJavaMailProperties();
+		props.put("mail.transport.protocol", "smtp");
+		props.put("mail.smtp.auth", "true");
+		props.put("mail.smtp.starttls.enable", "true");
+		props.put("mail.debug", "true");
+	}
+	
+	void setYahooMail(JavaMailSenderImpl mailSender) {
+		mailSender.setHost("smtp.mail.yahoo.com");
+		mailSender.setPort(587);
+		mailSender.setUsername("kaynaak.app@yahoo.com");
+		mailSender.setPassword("App@123Kay");
+	
+		Properties props = mailSender.getJavaMailProperties();
+		props.put("mail.transport.protocol", "smtp");
+		props.put("mail.smtp.auth", "true");
+		props.put("mail.smtp.starttls.enable", "true");
+		props.put("mail.debug", "true");
+	}
+	
+	void setSmtp2go(JavaMailSenderImpl mailSender) {
 		mailSender.setHost("mail.smtp2go.com");
 		mailSender.setPort(25);
 		mailSender.setUsername("hanguyenvan127@gmail.com");
@@ -55,9 +73,6 @@ mailSender.setHost("smtp.gmail.com");
 		Properties props = mailSender.getJavaMailProperties();
 		props.put("mail.transport.protocol", "smtp");
 		props.put("mail.smtp.auth", "true");
-		//props.put("mail.smtp.starttls.enable", "true");
-		//props.put("mail.debug", "true");
-		return mailSender;
+		props.put("mail.debug", "true");
 	}
-	
 }
