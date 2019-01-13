@@ -1,6 +1,7 @@
 package com.kaynaak.rest.mail;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
@@ -22,10 +23,13 @@ public class EmailServiceImpl implements EmailService {
 	@Autowired
 	public JavaMailSender emailSender;
 
+	@Value("${spring.mail.from}")
+    private String from;
+	
 	public void sendSimpleMessage(String to, String subject, String text) {
 		try {
 			SimpleMailMessage message = new SimpleMailMessage();
-			message.setFrom("kaynaak.app@yahoo.com");
+			message.setFrom(from);
 			message.setTo(to);
 			message.setSubject(subject);
 			message.setText(text);
