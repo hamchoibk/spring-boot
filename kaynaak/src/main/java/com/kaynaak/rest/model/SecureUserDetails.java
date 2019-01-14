@@ -11,12 +11,15 @@ public class SecureUserDetails extends User {
 	private String userID;
     private String email;
     private String name;
+    private String userType;
 
-    public SecureUserDetails(com.kaynaak.rest.entity.User user, Collection<? extends GrantedAuthority> authorities) {
+
+	public SecureUserDetails(com.kaynaak.rest.entity.User user, Collection<? extends GrantedAuthority> authorities) {
         super(user.getUsername(), user.getPassword(), authorities);
         this.email = user.getEmail();
         this.userID = String.valueOf(user.getId());
         this.name = user.getName();
+        this.userType= user.getUserType();
     }
 
 
@@ -43,4 +46,14 @@ public class SecureUserDetails extends User {
     public void setName(String name) {
         this.name = name;
     }
+
+    public String getUserType() {
+		return userType;
+	}
+
+
+	public void setUserType(String userType) {
+		this.userType = userType;
+	}
+
 }

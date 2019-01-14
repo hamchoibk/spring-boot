@@ -18,6 +18,8 @@ password
 user_type
 otp
 status
+
+
  */
 
 @Entity
@@ -43,6 +45,16 @@ public class User {
 	@Column(name = "otp",nullable = true)
 	private String otp;
 
+	
+	@Column(name = "user_type")
+	private String userType;
+
+	@Column(name = "department_id")
+	private Integer departmentId;
+	
+	@Column(name = "status")
+	private String status;
+	
 	public Integer getId() {
 		return id;
 	}
@@ -93,5 +105,30 @@ public class User {
 
 	public void setOtp(String otp) {
 		this.otp = otp;
+	}
+	
+	
+	public String getUserType() {
+		return userType;
+	}
+
+	public void setUserType(String userType) {
+		this.userType = userType;
+	}
+
+	public Integer getDepartmentId() {
+		return departmentId;
+	}
+
+	public void setDepartmentId(Integer departmentId) {
+		this.departmentId = departmentId;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 }

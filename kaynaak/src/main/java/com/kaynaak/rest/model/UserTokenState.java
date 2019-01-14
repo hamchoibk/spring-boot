@@ -7,8 +7,11 @@ public class UserTokenState {
     private String name;
     private String access_token;
     private long expires_in;
+    private String userType;
 
-    public UserTokenState() {
+
+
+	public UserTokenState() {
     }
 
     public UserTokenState(String access_token, long expires_in) {
@@ -22,6 +25,14 @@ public class UserTokenState {
         this.expires_in = expires_in;
     }
 
+    public UserTokenState(String name, String userType, String access_token, Long expires_in) {
+        this.name = name;
+        this.userType = userType;
+        this.access_token = access_token;
+        this.expires_in = expires_in;
+    }
+
+    
     public String getName() {
         return name;
     }
@@ -45,4 +56,12 @@ public class UserTokenState {
     public void setExpires_in(Long expires_in) {
         this.expires_in = expires_in;
     }
+    
+    public String getUserType() {
+		return userType;
+	}
+
+	public void setUserType(String userType) {
+		this.userType = userType;
+	}
 }

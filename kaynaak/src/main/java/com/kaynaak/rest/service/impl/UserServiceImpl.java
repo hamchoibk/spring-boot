@@ -146,7 +146,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
 		// customUserDetails.getUsername());
 		String jws = tokenHelper.generateToken(customUserDetails.getUsername());
 		// Return the token
-		return new UserTokenState(customUserDetails.getName(), jws, (long) EXPIRES_IN);
+		return new UserTokenState(customUserDetails.getName(),customUserDetails.getUserType(), jws, (long) EXPIRES_IN);
 	}
 	
 	@Override
