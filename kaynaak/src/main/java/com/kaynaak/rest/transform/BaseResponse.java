@@ -21,6 +21,7 @@ public class BaseResponse implements Serializable {
 	protected int code;
 
 	@JsonProperty("message")
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	protected String message;
 
 	@JsonProperty("data")

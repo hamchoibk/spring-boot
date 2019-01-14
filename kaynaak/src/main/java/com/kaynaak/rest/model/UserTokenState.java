@@ -1,5 +1,7 @@
 package com.kaynaak.rest.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Created by fan.jin on 2016-10-17.
  */
@@ -7,6 +9,8 @@ public class UserTokenState {
     private String name;
     private String access_token;
     private long expires_in;
+    
+    @JsonProperty(value = "user_type")
     private String userType;
 
 

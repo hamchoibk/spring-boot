@@ -43,6 +43,9 @@ public class UserController {
 	@ResponseBody
 	public BaseResponse getProfile() {
 		try {
+			
+			User user=this.userService.getProfile();
+			user.setPassword(null);
 			return new BaseResponse(this.userService.getProfile());
 		} catch (Exception e) {
 			logger.info(" exc controller");
