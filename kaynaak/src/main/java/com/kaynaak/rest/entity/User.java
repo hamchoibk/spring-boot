@@ -7,27 +7,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-/* 
-id
-department_id
-name
-email
-phone
-user_name
-password
-user_type
-otp
-status
-
-
- */
-
 @Entity
 @Table(name = "user")
 public class User {
 	@Id
 	@Column(name = "id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	
+	//@JsonSerialize(using = CustomIdEncrpytedSerializer.class)
 	private Integer id;
 
 	@Column(name = "user_name")
